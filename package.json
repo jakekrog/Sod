@@ -1,0 +1,13 @@
+{
+  "name": "sod-bundle-tools",
+  "private": true,
+  "type": "module",
+  "description": "Build-time only. Produces Sources/Sod/Resources/zod.bundle.js; not published to npm and not needed by consumers of the Swift package.",
+  "scripts": {
+    "bundle": "node scripts/bundle.mjs"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.0",
+    "zod": "4.4.3"
+  }
+}
