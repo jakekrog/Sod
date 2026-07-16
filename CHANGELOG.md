@@ -1,11 +1,14 @@
 # Changelog
 
-Versioned `{zodMajor}.{zodMinor}.{sodPatch}` — the major and minor track the
-embedded Zod, the patch is Sod's own. See the README's Versioning section.
+Plain SemVer. Each release records the Zod version it embeds — the version
+string doesn't encode it; see the README's Versioning section for why.
 
-## [4.4.0] — 2026-07-15
+## [0.1.0] — 2026-07-15
 
 Initial release. Embeds **Zod 4.4.3**.
+
+0.x: the API may change. It's tested and it works, but nothing is committed to
+yet.
 
 ### Added
 

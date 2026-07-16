@@ -17,8 +17,11 @@ try await sod.validate(user, against: "UserCreate")
 ## Install
 
 ```swift
-.package(url: "https://github.com/jakekrog/Sod.git", from: "4.4.0")
+.package(url: "https://github.com/jakekrog/Sod.git", from: "0.1.0")
 ```
+
+**0.x, and it means what SemVer says it means: the API may change.** Sod is
+new. It's tested and it works, but nothing here is committed to yet.
 
 **iOS 15+ · iPadOS 15+ · macOS 12+ · tvOS 15+ · visionOS 1+.** Not watchOS —
 JavaScriptCore isn't public there — and not Linux.
@@ -87,17 +90,25 @@ trust boundary is the same as `JSONEncoder`'s.
 
 ## Versioning
 
-`{zodMajor}.{zodMinor}.{sodPatch}` — **`4.4.0` embeds Zod 4.4.x.**
+**Plain SemVer, currently 0.x.** Pinning a Sod version pins a Zod version, but
+the version *string* doesn't try to tell you which — `Sod.bundledZodVersion`
+does, at runtime, and the [CHANGELOG](CHANGELOG.md) records it per release.
 
-Pinning a Sod version implicitly pins a Zod version, so the scheme makes that
-contract visible and resolvable. The patch is Sod's to spend on a Zod patch
-bump, a Swift fix, or a docs release. `Sod.bundledZodVersion` reports the exact
-embedded version at runtime — assert against it in your tests if your schema
-bundles are compiled against a Zod from `package.json`, since those two must
-agree or your bundles are compiled against one Zod and executed against another.
+An earlier scheme encoded it (`{zodMajor}.{zodMinor}.{sodPatch}`, so `4.4.0`
+would mean Zod 4.4.x). It was dropped for two reasons worth knowing if you're
+wondering why the version doesn't match Zod's:
 
-Build metadata (`4.4.0+zod.4.4.3`) was rejected: SemVer excludes it from
-precedence, so SwiftPM couldn't pin it.
+- **It breaks on Sod's first API change.** Breaking Sod's own API forces a major
+  bump; do that while Zod is on 4.x and you ship `5.0.0`, which then claims a Zod
+   5 that doesn't exist. The scheme's one promise fails exactly when a young
+  package needs it.
+- **The planned Zod override contradicts it.** If you can supply your own Zod
+  bundle, the running Zod isn't necessarily the embedded one, and no version
+  string can honestly claim otherwise.
+
+If your schema bundles are compiled against a Zod from your `package.json`,
+assert `Sod.bundledZodVersion` in your tests — those two must agree, or your
+bundles are compiled against one Zod and executed against another.
 
 ### Planned: overriding the embedded Zod
 
