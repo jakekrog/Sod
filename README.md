@@ -99,6 +99,30 @@ agree or your bundles are compiled against one Zod and executed against another.
 Build metadata (`4.4.0+zod.4.4.3`) was rejected: SemVer excludes it from
 precedence, so SwiftPM couldn't pin it.
 
+### Planned: overriding the embedded Zod
+
+The embedded Zod is currently fixed at release, which caps what a
+runtime-delivered schema can use: a schema written against a newer Zod API won't
+evaluate. A future release will let you supply your own Zod bundle
+(`Sod(zodSource:)`), so that cap isn't a reason to ship an app update.
+
+It will come with sharp edges, stated up front:
+
+- **Zod is fixed for a `Sod` instance's lifetime, by design.** Schema objects
+  capture their `z` when constructed, so swapping Zod under a live instance
+  would leave already-registered schemas on the old semantics while new ones use
+  the new — mixed, and invisible in the results. To move Zod, build a new `Sod`
+  and re-register.
+- **You own compatibility.** Sod can't know whether your schema bundles work on
+  the Zod you supply. Have your bundles declare the Zod they were compiled
+  against, and check it against `activeZodVersion` before you register them. If
+  you skip this, you get bundles compiled against one Zod and executed against
+  another, and nothing will tell you.
+- **You own integrity, more than ever.** See Trust above — this is the
+  validation engine, not just a schema.
+- **Always keep a fallback.** A failed or bad override should degrade to
+  `bundledZodVersion`'s embedded copy, never to "cannot validate anything".
+
 ## Performance
 
 Creating a `Sod` parses and evaluates the Zod bundle — tens of milliseconds,
