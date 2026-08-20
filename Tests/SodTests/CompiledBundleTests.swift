@@ -7,32 +7,16 @@ import Testing
 ///
 /// The other suites prove the API against fixtures written by hand — which can't
 /// tell you whether *bundler output* actually loads, because they never went
-/// through a bundler. `fixtures/exampleSchemas.ts` is compiled by
-/// `scripts/build-fixture.mjs` the way a consumer compiles their own schemas
-/// (Zod external, IIFE, minified), and this suite runs the result. That's what
+/// through a bundler. `fixtures/exampleSchemas.ts` is compiled by `@sod/build`
+/// via `sod.config.js` the way a consumer compiles their own schemas (Zod
+/// external, IIFE, minified), and this suite runs the result. That's what
 /// catches Zod failing to resolve to `globalThis.z`, or minified output
 /// misbehaving under JavaScriptCore.
 ///
-/// Regenerate the fixture with `node scripts/build-fixture.mjs`; the output is
-/// committed so `swift test` needs no Node toolchain.
-private func loadFixture() throws -> String {
-    guard
-        let url = Bundle.module.url(
-            forResource: "example.bundle",
-            withExtension: "js",
-            subdirectory: "Fixtures"
-        ) ?? Bundle.module.url(forResource: "example.bundle", withExtension: "js")
-    else {
-        Issue.record("fixture missing — run: node scripts/build-fixture.mjs")
-        throw SodRuntimeError.bundleResourceMissing("example.bundle.js")
-    }
-    return try String(contentsOf: url, encoding: .utf8)
-}
-
+/// Regenerate the fixtures with `npm run build`; the output is committed so
+/// `swift test` needs no Node toolchain.
 private func makeSod() async throws -> Sod {
-    let sod = try Sod()
-    try await sod.register(source: try loadFixture())
-    return sod
+    try await TestFixtures.makeSod(schemaSource: try TestFixtures.schemaBundle())
 }
 
 private let validOrder = """
@@ -118,9 +102,9 @@ struct CompiledBundleTests {
 
     @Test("reads Zod from globalThis rather than embedding its own copy")
     func zodIsExternal() throws {
-        // A bundle that inlined Zod would shadow Sod's and silently validate
-        // against a different version than `bundledZodVersion` reports.
-        let source = try loadFixture()
+        // A bundle that inlined Zod would shadow the supplied copy and silently
+        // validate against a different version than `activeZodVersion` reports.
+        let source = try TestFixtures.schemaBundle()
         #expect(source.contains("globalThis.z"))
         #expect(!source.contains("ZodObject"))
     }

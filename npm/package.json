@@ -1,0 +1,23 @@
+{
+  "name": "@sod/build",
+  "version": "0.2.0",
+  "type": "module",
+  "description": "Build JavaScriptCore-safe Zod and schema bundles for Sod on Apple platforms.",
+  "bin": {
+    "sod": "./cli.mjs"
+  },
+  "exports": {
+    ".": "./index.mjs"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "peerDependencies": {
+    "esbuild": ">=0.20.0",
+    "zod": ">=4.0.0"
+  },
+  "files": [
+    "*.mjs"
+  ],
+  "license": "MIT"
+}

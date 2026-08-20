@@ -33,24 +33,21 @@ private struct User: Encodable {
 }
 
 private func makeSod() async throws -> Sod {
-    let sod = try Sod()
-    try await sod.register(source: userBundle)
-    return sod
+    try await TestFixtures.makeSod(schemaSource: userBundle)
 }
 
 @Suite("Zod bundle")
 struct BundleTests {
-    @Test("reports the Zod version it embeds")
-    func bundledVersion() {
-        // Pinning Sod pins Zod; consumers assert against this so a drift between
-        // their schema bundle's Zod and ours can't go unnoticed.
-        #expect(Sod.bundledZodVersion == "4.4.3")
+    @Test("reports the Zod version supplied at init")
+    func activeVersion() async throws {
+        let sod = try await TestFixtures.makeSod()
+        #expect(await sod.activeZodVersion == "4.4.3")
     }
 
     @Test("loads Zod into a fresh context")
     func loadsZod() throws {
         let runtime = try JSRuntime()
-        try runtime.loadZod()
+        try runtime.loadZod(source: try TestFixtures.zodBundle())
         let version = try runtime.evaluate("typeof globalThis.z", context: "probe")
         #expect(version.toString() == "object")
     }
@@ -68,7 +65,7 @@ struct RegisterTests {
 
     @Test("rejects a bundle that registers nothing")
     func rejectsEmptyBundle() async throws {
-        let sod = try Sod()
+        let sod = try await TestFixtures.makeSod()
         await #expect(throws: SodRuntimeError.self) {
             try await sod.register(source: "(() => { var unused = 1; })();")
         }
@@ -76,7 +73,7 @@ struct RegisterTests {
 
     @Test("surfaces a throwing bundle as a runtime error, not a validation error")
     func surfacesBundleException() async throws {
-        let sod = try Sod()
+        let sod = try await TestFixtures.makeSod()
         await #expect(throws: SodRuntimeError.self) {
             try await sod.register(source: "throw new Error('boom');")
         }
@@ -182,7 +179,7 @@ struct ValidateTests {
             Issue.record("expected a SodError for the malformed email")
         } catch is SodError {
             let runtime = try JSRuntime()
-            try runtime.loadZod()
+            try runtime.loadZod(source: try TestFixtures.zodBundle())
             let pwned = try runtime.evaluate("typeof globalThis.pwned", context: "probe")
             #expect(pwned.toString() == "undefined")
         }
@@ -190,7 +187,7 @@ struct ValidateTests {
 
     @Test("encodes dates as ISO 8601 by default")
     func iso8601Dates() async throws {
-        let sod = try Sod()
+        let sod = try await TestFixtures.makeSod()
         try await sod.register(
             source: """
             (() => {

@@ -47,14 +47,13 @@ final class JSRuntime {
         return result
     }
 
-    /// Loads the embedded Zod bundle, defining `globalThis.z`.
+    /// Loads a consumer-supplied Zod bundle, defining `globalThis.z`.
     ///
-    /// Must run before any consumer bundle: those are compiled with Zod marked
+    /// Must run before any schema bundle: those are compiled with Zod marked
     /// external and read it from `globalThis.z` at evaluation time, so the
     /// reverse order fails on the first `z.object(...)` call (ADR-015).
-    func loadZod() throws {
-        let source = try Self.resourceContents(named: "zod.bundle", extension: "js")
-        try evaluate(source, context: "loading the embedded Zod bundle")
+    func loadZod(source: String) throws {
+        try evaluate(source, context: "loading the Zod bundle")
 
         guard let z = context.objectForKeyedSubscript("z"), !z.isUndefined else {
             throw SodRuntimeError.scriptEvaluationFailed(
@@ -122,30 +121,6 @@ final class JSRuntime {
             throw SodRuntimeError.malformedValidationResult("result was not a string")
         }
         return json
-    }
-
-    var bundledZodVersion: String {
-        get throws {
-            try Self.resourceContents(named: "zod.bundle", extension: "version")
-                .trimmingCharacters(in: .whitespacesAndNewlines)
-        }
-    }
-
-    private static func resourceContents(named name: String, extension ext: String) throws -> String {
-        guard
-            let url = Bundle.module.url(
-                forResource: name,
-                withExtension: ext,
-                subdirectory: "Resources"
-            ) ?? Bundle.module.url(forResource: name, withExtension: ext)
-        else {
-            throw SodRuntimeError.bundleResourceMissing("\(name).\(ext)")
-        }
-        do {
-            return try String(contentsOf: url, encoding: .utf8)
-        } catch {
-            throw SodRuntimeError.bundleResourceMissing("\(name).\(ext): \(error.localizedDescription)")
-        }
     }
 
     /// JSON-encodes a Swift string into a JS string literal, quotes included.

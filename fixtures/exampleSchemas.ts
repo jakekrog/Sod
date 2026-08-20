@@ -2,10 +2,10 @@
  * The schema source for Sod's compiled test fixture.
  *
  * This is an ordinary consumer schema module — exactly what a Sod user writes.
- * `scripts/build-fixture.mjs` compiles it the way a consumer would (esbuild,
- * Zod external), and the suite runs the compiled output. That's the point: a
- * hand-written JS fixture would silently pass even if real bundler output
- * couldn't load, because it never goes through a bundler.
+ * `npm run build` (via `@sod/build` and `sod.config.js`) compiles it the way a
+ * consumer would (esbuild, Zod external), and the suite runs the compiled output.
+ * That's the point: a hand-written JS fixture would silently pass even if real
+ * bundler output couldn't load, because it never goes through a bundler.
  *
  * It deliberately covers what's hard rather than what's typical:
  *   - `superRefine` — logic no JSON Schema or generated Swift struct can express

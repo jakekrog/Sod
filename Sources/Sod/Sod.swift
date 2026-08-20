@@ -9,15 +9,16 @@ import Foundation
 /// the server — because they *are* the server's schemas.
 ///
 /// ```swift
-/// let sod = try await Sod()
+/// let sod = try Sod(zodSource: zodBundleSource)
 /// try await sod.register(source: schemaBundleSource)
 /// try await sod.validate(user, against: "UserCreate")
 /// ```
 ///
-/// Schemas are authored in TypeScript and pre-bundled with esbuild — Zod marked
-/// external, since Sod supplies it — into a JS string that assigns
-/// `globalThis.__sodSchemas["Name"]`. Sod doesn't ship a TypeScript compiler;
-/// consumers already run one to produce their web bundle.
+/// Schemas are authored in TypeScript and pre-bundled with `@sod/build` — Zod
+/// marked external, since you supply it — into JS strings that assign
+/// `globalThis.__sodSchemas["Name"]`. Sod doesn't ship a TypeScript compiler
+/// or a pinned Zod version; consumers already run both to produce their web
+/// bundle.
 ///
 /// ## Threading
 ///
@@ -41,27 +42,30 @@ import Foundation
 /// JavaScriptCore isn't public there — and not Linux.
 public actor Sod {
     private let runtime: JSRuntime
+    private let zodVersion: String?
 
-    /// The Zod version compiled into this Sod release.
+    /// The Zod version this instance was constructed with, when the caller
+    /// supplied one (typically from `zod.bundle.version` produced by
+    /// `@sod/build`).
     ///
-    /// Pinning a Sod version implicitly pins a Zod version, so this makes the
-    /// contract checkable at runtime or assertable in a test rather than a docs
-    /// lookup. It matters most when consumer bundles are compiled against a Zod
-    /// from `package.json`: that version and this one must agree, or the bundle
-    /// is compiled against one Zod and executed against another.
-    public static let bundledZodVersion: String = {
-        // Reading the resource can't fail in a correctly-built package; if it
-        // somehow does, a sentinel is better than a crash in a static.
-        (try? JSRuntime().bundledZodVersion) ?? "unknown"
-    }()
+    /// Assert this against the Zod in your `package.json` so schema bundles are
+    /// never compiled against one Zod and executed against another.
+    public var activeZodVersion: String? { zodVersion }
 
-    /// Creates a context and loads the embedded Zod bundle.
+    /// Creates a context and loads a consumer-supplied Zod bundle.
     ///
     /// This is the one-time warm-up: parsing and evaluating Zod costs tens of
     /// milliseconds. Create one `Sod` and keep it; don't make one per validation.
-    public init() throws {
+    ///
+    /// - Parameters:
+    ///   - zodSource: A JavaScriptCore-safe IIFE that assigns `globalThis.z`,
+    ///     produced by `@sod/build`.
+    ///   - zodVersion: The semver from `zod.bundle.version`, if you have it.
+    ///     Sod can't infer this from the JS alone.
+    public init(zodSource: String, zodVersion: String? = nil) throws {
         runtime = try JSRuntime()
-        try runtime.loadZod()
+        try runtime.loadZod(source: zodSource)
+        self.zodVersion = zodVersion
     }
 
     /// Evaluates a pre-bundled schema source, making its schemas available to

@@ -4,11 +4,7 @@
 *.xcodeproj
 Package.resolved
 
-# Build-time only, for scripts/*.mjs. Sources/Sod/Resources/zod.bundle.js and
-# Tests/SodTests/Fixtures/example.bundle.js are checked in on purpose so
-# consumers (and `swift test`) need no Node toolchain.
+# Build-time only, for `@sod/build`. Test fixtures under Tests/SodTests/Fixtures/
+# are checked in on purpose so consumers (and `swift test`) need no Node toolchain.
 node_modules/
 package-lock.json
-
-# Written by scripts/build-fixture.mjs
-scripts/zodShim.js
