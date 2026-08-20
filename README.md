@@ -1,5 +1,7 @@
 # Sod
 
+[![CI](https://github.com/jakekrog/Sod/actions/workflows/ci.yml/badge.svg)](https://github.com/jakekrog/Sod/actions/workflows/ci.yml)
+
 Run real [Zod](https://zod.dev) schemas on Apple platforms.
 
 Swift clients that share a contract with a TypeScript backend usually
