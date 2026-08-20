@@ -163,6 +163,9 @@ what catches Zod failing to resolve to `globalThis.z`, or minified output
 misbehaving under JavaScriptCore. It doubles as a worked example of the consumer
 build.
 
+See [CONTRIBUTING.md](CONTRIBUTING.md) for branching, merge strategy, and
+release process.
+
 ## License
 
 MIT. Embeds Zod, also MIT — see [LICENSE](LICENSE).

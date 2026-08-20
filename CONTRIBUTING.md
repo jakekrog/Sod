@@ -1,0 +1,119 @@
+# Contributing
+
+Thanks for helping improve Sod. This document describes how we branch, merge,
+and cut releases.
+
+## Branches
+
+| Branch | Purpose |
+|--------|---------|
+| `main` | Always reflects the latest **released** (or release-ready) state. Tagged for SPM consumers. |
+| `release/X.Y.Z` | Integration branch for an upcoming version. Feature work targets here first. |
+| `feature/...`, `ci/...`, `fix/...` | Short-lived branches for individual changes. |
+
+Nothing lands on `main` directly. Open a pull request instead.
+
+### Example flow for 0.2.0
+
+```text
+feature/consumer-supplied-zod ──squash──► release/0.2.0 ──merge──► main
+ci/github-actions              ──squash──► release/0.2.0              │
+test/more-coverage             ──squash──► release/0.2.0              └── tag 0.2.0
+```
+
+1. Create `release/0.2.0` from `main` when starting work on that version.
+2. Merge feature PRs into `release/0.2.0` (squash — see below).
+3. When the release is ready, open a PR from `release/0.2.0` → `main` (merge
+   commit).
+4. On `main`, finalize the changelog, commit `chore(release): X.Y.Z`, and tag.
+
+## Merge strategy
+
+We use different merge strategies depending on the target branch.
+
+### Into `release/X.Y.Z` — squash merge
+
+Squash each PR into a single commit on the release branch. This keeps the
+release branch readable: one commit per logical change, without losing the full
+discussion and review history in the PR itself.
+
+Write a good squash commit message — it becomes the permanent record on the
+release branch. The PR title and description are a fine starting point.
+
+### Into `main` — merge commit
+
+Merge the release branch with a **merge commit**, not a squash or rebase. This
+preserves the release as a identifiable unit in history and avoids rewriting
+commits that may already be signed.
+
+Linear history is not a goal. `git log --first-parent main` gives a clean view of
+releases if you need one.
+
+### Do not rebase merge on GitHub
+
+**Rebase and merge is disabled** (or should be). Rebasing rewrites commits, which
+**breaks GPG commit verification** — the signatures on the original commits no
+longer apply to the rebased SHAs.
+
+Squash and merge commits produce new commits that GitHub can sign on your behalf
+if commit signing is enabled in your account settings.
+
+## Commit messages
+
+Follow [Conventional Commits](https://www.conventionalcommits.org/):
+
+```text
+feat: add activeZodVersion
+fix: reject empty schema bundles
+ci: run swift test on pull requests
+chore(release): 0.2.0
+```
+
+Breaking changes use `!` or a `BREAKING CHANGE:` footer:
+
+```text
+feat!: require consumer-supplied Zod via @sod/build
+```
+
+## Changelog
+
+[CHANGELOG.md](CHANGELOG.md) follows [Keep a Changelog](https://keepachangelog.com/).
+
+- Work in progress accumulates under `[Unreleased]` on the release branch.
+- When shipping, rename `[Unreleased]` to `[X.Y.Z] — YYYY-MM-DD` in the release
+  commit on `main`.
+
+## Releases
+
+Cutting a release:
+
+1. Confirm `release/X.Y.Z` is green (CI passing, tests reviewed).
+2. Merge `release/X.Y.Z` → `main` with a merge commit.
+3. On `main`:
+   - Rename `[Unreleased]` → `[X.Y.Z] — YYYY-MM-DD` in `CHANGELOG.md`
+   - Update version pins in `README.md` if needed
+   - Commit: `chore(release): X.Y.Z`
+4. Tag: `git tag X.Y.Z && git push origin X.Y.Z`
+5. Create a GitHub Release from the tag.
+
+SPM consumers pin git tags (e.g. `from: "0.2.0"`). The `@sod/build` npm package
+is published separately when ready — a Swift tag does not require an npm publish.
+
+## Development
+
+```bash
+swift test          # no Node toolchain required
+npm install         # only for @sod/build
+npm run build       # regenerates Tests/SodTests/Fixtures/
+```
+
+See [README.md](README.md) for install and consumer build instructions.
+
+## Branch protection (recommended)
+
+On `main` and active `release/*` branches:
+
+- Require pull request before merging
+- Require status checks to pass (once CI exists)
+- Allow **Squash merge** and **Merge commit**
+- Disallow **Rebase and merge**
