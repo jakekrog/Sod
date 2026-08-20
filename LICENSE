@@ -22,8 +22,9 @@ SOFTWARE.
 
 ---
 
-This package embeds Zod (https://github.com/colinhacks/zod), which is also MIT
-licensed, as a pre-built artifact at Sources/Sod/Resources/zod.bundle.js.
+Applications that bundle Zod via `@sod/build` include Zod (https://github.com/colinhacks/zod),
+which is also MIT licensed. See Zod's license in your `node_modules/zod/LICENSE` or at
+https://github.com/colinhacks/zod/blob/master/LICENSE.
 
 Copyright (c) 2020 Colin McDonnell
 

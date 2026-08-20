@@ -1,7 +1,28 @@
 # Changelog
 
-Plain SemVer. Each release records the Zod version it embeds — the version
-string doesn't encode it; see the README's Versioning section for why.
+Plain SemVer. Each release records notable API changes.
+
+## [0.2.0] — 2026-08-20
+
+### Breaking
+
+- Sod no longer embeds Zod. Consumers must bundle their own Zod version with
+  `@sod/build` and pass it to `Sod(zodSource:zodVersion:)`.
+- Removed `Sod.bundledZodVersion`. Use `sod.activeZodVersion` instead.
+- Removed `Sod()` parameterless initializer.
+
+### Added
+
+- `@sod/build` npm package — `npx sod build` produces `zod.bundle.js`,
+  `zod.bundle.version`, and `schemas.bundle.js` from `sod.config.js`.
+- `Sod(zodSource:zodVersion:)` — loads a consumer-supplied Zod bundle.
+- `Sod.activeZodVersion` — the Zod semver passed at init, when provided.
+
+### Removed
+
+- Embedded `Sources/Sod/Resources/zod.bundle.js` and `zod.bundle.version`.
+- `scripts/bundle.mjs` and `scripts/build-fixture.mjs` (replaced by
+  `@sod/build`).
 
 ## [0.1.0] — 2026-07-15
 
