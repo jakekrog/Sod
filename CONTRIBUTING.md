@@ -9,16 +9,48 @@ and cut releases.
 |--------|---------|
 | `main` | Always reflects the latest **released** (or release-ready) state. Tagged for SPM consumers. |
 | `release/X.Y.Z` | Integration branch for an upcoming version. Feature work targets here first. |
-| `feature/...`, `ci/...`, `fix/...` | Short-lived branches for individual changes. |
+| `<type>/<description>` | Short-lived branches for individual changes — see [Branch names](#branch-names). |
 
 Nothing lands on `main` directly. Open a pull request instead.
+
+### Branch names
+
+Branch names follow [Conventional Branch](https://conventionalbranch.org/):
+
+```text
+<type>/<description>
+```
+
+Use lowercase letters, numbers, and hyphens in the description. No underscores or
+spaces. Release branches may use dots in the version (e.g. `release/0.2.0`).
+
+| Prefix | Use for |
+|--------|---------|
+| `feature/` (or `feat/`) | New functionality |
+| `fix/` (or `bugfix/`) | Bug fixes |
+| `hotfix/` | Urgent fixes against a released version |
+| `release/` | Release integration branches (e.g. `release/0.2.0`) |
+| `chore/` | Everything else — CI, docs, dependencies, refactors, tests |
+
+Stick to these prefixes. Commit messages have a wider vocabulary (`ci:`,
+`test:`, `docs:`, etc. under [Conventional Commits](#commit-messages)); branch
+names do not invent new types from commit scopes.
+
+Examples:
+
+```text
+feature/consumer-supplied-zod
+chore/github-actions
+fix/schema-registry-empty-bundle
+release/0.2.0
+```
 
 ### Example flow for 0.2.0
 
 ```text
 feature/consumer-supplied-zod ──squash──► release/0.2.0 ──merge──► main
-ci/github-actions              ──squash──► release/0.2.0              │
-test/more-coverage             ──squash──► release/0.2.0              └── tag 0.2.0
+chore/github-actions           ──squash──► release/0.2.0              │
+chore/expand-test-coverage     ──squash──► release/0.2.0              └── tag 0.2.0
 ```
 
 1. Create `release/0.2.0` from `main` when starting work on that version.
@@ -60,7 +92,9 @@ if commit signing is enabled in your account settings.
 
 ## Commit messages
 
-Follow [Conventional Commits](https://www.conventionalcommits.org/):
+Follow [Conventional Commits](https://www.conventionalcommits.org/). Commit
+types can be more specific than branch prefixes — a `chore/github-actions`
+branch might squash to a `ci:` commit, for example:
 
 ```text
 feat: add activeZodVersion
