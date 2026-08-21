@@ -6,6 +6,8 @@
   ],
   "type": "module",
   "scripts": {
+    "postinstall": "npm rebuild @sod/build",
+    "prebuild": "npm run build --workspace @sod/build",
     "build": "sod build",
     "fmt": "oxfmt",
     "fmt:check": "oxfmt --check",

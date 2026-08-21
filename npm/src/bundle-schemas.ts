@@ -7,19 +7,21 @@ import { join, resolve } from "node:path";
 import { mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 
-/**
- * @typedef {object} SchemaEntry
- * @property {string} name - Registry name passed to `validate(..., against: name)`
- * @property {string} from - Module path relative to the config directory
- * @property {string} export - Named export to register
- */
+export interface SchemaEntry {
+  /** Registry name passed to `validate(..., against: name)` */
+  name: string;
+  /** Module path relative to the config directory */
+  from: string;
+  /** Named export to register */
+  export: string;
+}
 
-/**
- * @param {SchemaEntry[]} schemas
- * @param {string} configDir
- * @returns {string}
- */
-function buildEntryContents(schemas, configDir) {
+export interface SchemasBundleResult {
+  schemasPath: string;
+  sizeKB: string;
+}
+
+function buildEntryContents(schemas: SchemaEntry[], configDir: string): string {
   const imports = schemas
     .map((schema) => {
       const modulePath = resolve(configDir, schema.from);
@@ -40,14 +42,13 @@ ${registrations}
 `;
 }
 
-/**
- * @param {object} options
- * @param {SchemaEntry[]} options.schemas
- * @param {string} options.configDir
- * @param {string} options.outDir
- * @returns {{ schemasPath: string, sizeKB: string }}
- */
-export async function bundleSchemas({ schemas, configDir, outDir }) {
+export async function bundleSchemas(options: {
+  schemas: SchemaEntry[];
+  configDir: string;
+  outDir: string;
+}): Promise<SchemasBundleResult> {
+  const { schemas, configDir, outDir } = options;
+
   if (schemas.length === 0) {
     throw new Error("sod.config.js must declare at least one schema");
   }

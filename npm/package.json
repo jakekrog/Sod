@@ -4,14 +4,33 @@
   "description": "Build JavaScriptCore-safe Zod and schema bundles for Sod on Apple platforms.",
   "license": "MIT",
   "bin": {
-    "sod": "./cli.mjs"
+    "sod": "./dist/cli.js"
   },
   "files": [
-    "*.mjs"
+    "dist"
   ],
   "type": "module",
+  "types": "./dist/index.d.ts",
   "exports": {
-    ".": "./index.mjs"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "dev": "tsdown --watch",
+    "typecheck": "tsc --noEmit",
+    "prepare": "tsdown",
+    "prepublishOnly": "tsdown"
+  },
+  "devDependencies": {
+    "@types/node": "^26.2.0",
+    "tsdown": "^0.22.14",
+    "typescript": "^7.0.2"
   },
   "peerDependencies": {
     "esbuild": ">=0.20.0",
