@@ -1,5 +1,7 @@
 # sod-build
 
+[![npm version](https://img.shields.io/npm/v/sod-build.svg)](https://www.npmjs.com/package/sod-build)
+
 Build JavaScriptCore-safe Zod and schema bundles for [Sod](https://github.com/jakekrog/Sod) on Apple platforms.
 
 Sod evaluates real Zod schemas in an embedded JavaScriptCore context. This package bundles the Zod version from your `package.json` and your TypeScript schemas into IIFEs that Sod loads at runtime.

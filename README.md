@@ -1,6 +1,7 @@
 # Sod
 
 [![CI](https://github.com/jakekrog/Sod/actions/workflows/ci.yml/badge.svg)](https://github.com/jakekrog/Sod/actions/workflows/ci.yml)
+[![npm version](https://img.shields.io/npm/v/sod-build.svg)](https://www.npmjs.com/package/sod-build)
 
 Run real [Zod](https://zod.dev) schemas on Apple platforms.
 
@@ -26,7 +27,8 @@ try await sod.validate(user, against: "UserCreate")
 ```
 
 **Build tooling** — Sod does not ship Zod. Bundle the Zod version from your
-`package.json` and your TypeScript schemas with `sod-build`:
+`package.json` and your TypeScript schemas with
+[sod-build](https://www.npmjs.com/package/sod-build):
 
 ```bash
 npm install -D sod-build zod esbuild
