@@ -19,7 +19,11 @@ jobs:
         uses: actions/checkout@v7
 
       - name: Lint
-        run: swift package plugin --allow-writing-to-package-directory swiftlint -- lint --strict --reporter github-actions-logging
+        run: >
+          swift package plugin --allow-writing-to-package-directory
+          swiftlint -- lint
+          --strict
+          --reporter github-actions-logging
 
   swift-test:
     name: Swift tests
