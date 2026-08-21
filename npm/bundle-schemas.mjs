@@ -3,7 +3,7 @@
  * registers them on `globalThis.__sodSchemas`, reading Zod from `globalThis.z`.
  */
 import { build } from "esbuild";
-import { dirname, join, resolve } from "node:path";
+import { join, resolve } from "node:path";
 import { mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 
@@ -28,7 +28,9 @@ function buildEntryContents(schemas, configDir) {
     .join("\n");
 
   const registrations = schemas
-    .map((schema) => `globalThis.__sodSchemas[${JSON.stringify(schema.name)}] = __sod_${schema.name};`)
+    .map(
+      (schema) => `globalThis.__sodSchemas[${JSON.stringify(schema.name)}] = __sod_${schema.name};`,
+    )
     .join("\n");
 
   return `
@@ -52,10 +54,7 @@ export async function bundleSchemas({ schemas, configDir, outDir }) {
 
   const tempDir = mkdtempSync(join(tmpdir(), "sod-build-"));
   const shimPath = join(tempDir, "zodShim.js");
-  writeFileSync(
-    shimPath,
-    "export const z = globalThis.z;\nexport default globalThis.z;\n",
-  );
+  writeFileSync(shimPath, "export const z = globalThis.z;\nexport default globalThis.z;\n");
 
   const result = await build({
     stdin: {

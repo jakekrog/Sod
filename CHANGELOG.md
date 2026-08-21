@@ -44,7 +44,7 @@ yet.
   a dotted string (and so an array index is never confused with a key named
   `"0"`). `SodIssue.code` is a `String` for forward compatibility with Zod
   releases that add codes.
-- `SodRuntimeError` — kept distinct from `SodError`: invalid *data* is something
+- `SodRuntimeError` — kept distinct from `SodError`: invalid _data_ is something
   to show a user, while a broken bundle is a bug, and conflating them turns a
   bad deployment into what looks like a form message.
 - `Sod.bundledZodVersion` — the embedded Zod version, checkable at runtime.

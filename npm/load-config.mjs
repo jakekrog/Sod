@@ -62,9 +62,7 @@ export async function loadConfig(projectDir = process.cwd()) {
   const configPath = CONFIG_NAMES.map((name) => join(root, name)).find((path) => existsSync(path));
 
   if (configPath === undefined) {
-    throw new Error(
-      `No sod.config.js found in ${root}. Create one next to package.json.`,
-    );
+    throw new Error(`No sod.config.js found in ${root}. Create one next to package.json.`);
   }
 
   const configDir = dirname(configPath);
