@@ -7,11 +7,11 @@
  * That's the point: a hand-written JS fixture would silently pass even if real
  * bundler output couldn't load, because it never goes through a bundler.
  *
- * It deliberately covers what's hard rather than what's typical:
- *   - `superRefine` — logic no JSON Schema or generated Swift struct can express
- *   - a nested object — multi-segment issue paths
- *   - an array — `PathComponent.index` vs a key named "0"
- *   - an enum — a plain structural check, as a control
+ * Each export exercises a different Zod capability through the bundler pipeline:
+ *   - Order — superRefine, nested objects, arrays, enums
+ *   - CatalogItem — transform
+ *   - Webhook — discriminatedUnion
+ *   - Profile — optional, nullable, default
  */
 import { z } from "zod";
 
@@ -55,4 +55,28 @@ export const Order = z.object({
       }),
     )
     .min(1),
+});
+
+export const CatalogItem = z.object({
+  slug: z.string().min(1).transform((value) => value.trim().toLowerCase()),
+  title: z.string().min(1),
+});
+
+export const Webhook = z.discriminatedUnion("type", [
+  z.object({
+    type: z.literal("user.created"),
+    userId: z.string().uuid(),
+  }),
+  z.object({
+    type: z.literal("order.paid"),
+    orderId: z.string().min(1),
+    amount: z.number().positive(),
+  }),
+]);
+
+export const Profile = z.object({
+  displayName: z.string().min(1),
+  bio: z.string().optional(),
+  avatarUrl: z.string().url().nullish(),
+  theme: z.enum(["light", "dark"]).default("light"),
 });
