@@ -24,13 +24,16 @@
     "build": "tsdown",
     "dev": "tsdown --watch",
     "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "prepare": "tsdown",
     "prepublishOnly": "tsdown"
   },
   "devDependencies": {
     "@types/node": "^26.2.0",
     "tsdown": "^0.22.14",
-    "typescript": "^7.0.2"
+    "typescript": "^7.0.2",
+    "vitest": "^3.2.4"
   },
   "peerDependencies": {
     "esbuild": ">=0.20.0",
