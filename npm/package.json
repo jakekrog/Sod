@@ -32,6 +32,9 @@
     "tsdown": "^0.22.14",
     "typescript": "^7.0.2"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "peerDependencies": {
     "esbuild": ">=0.20.0",
     "zod": ">=4.0.0"

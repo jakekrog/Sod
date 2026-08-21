@@ -124,11 +124,16 @@ Cutting a release:
 1. Confirm `release/X.Y.Z` is green (CI passing, tests reviewed).
 2. Merge `release/X.Y.Z` → `main` with a merge commit.
 3. On `main`:
-   - Rename `[Unreleased]` → `[X.Y.Z] — YYYY-MM-DD` in `CHANGELOG.md`
-   - Update version pins in `README.md` if needed
+   - Finalize the `[X.Y.Z]` entry in `CHANGELOG.md` (date, any last edits)
+   - Confirm `npm/package.json` version matches `X.Y.Z`
    - Commit: `chore(release): X.Y.Z`
-4. Tag: `git tag X.Y.Z && git push origin X.Y.Z`
-5. Create a GitHub Release from the tag.
+4. CI runs on that commit. When it passes, the [Release](.github/workflows/release.yml)
+   workflow tags `X.Y.Z`, creates a GitHub Release, and publishes `@sod/build` to npm.
+5. Add `NPM_TOKEN` (npm automation token) to repository secrets before the first npm
+   publish.
+
+Manual fallback: run the **Release** workflow from the Actions tab with a version
+input (uses the current `main` HEAD — only for recovery).
 
 SPM consumers pin git tags (e.g. `from: "0.2.0"`). The `@sod/build` npm package
 is published separately when ready — a Swift tag does not require an npm publish.
