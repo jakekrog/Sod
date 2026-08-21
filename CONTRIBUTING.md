@@ -153,8 +153,8 @@ commit. Linter versions come from `Package.swift` (SwiftLint) and
 One-time setup:
 
 ```bash
-pip install pre-commit   # or: brew install pre-commit
-npm install              # required for oxlint / oxfmt hooks
+brew bundle            # installs pre-commit from Brewfile
+npm install            # required for oxlint / oxfmt hooks
 pre-commit install
 ```
 

@@ -179,7 +179,7 @@ npm run build       # regenerates Tests/SodTests/Fixtures/
 pre-commit run --all-files   # optional; hooks also run on git commit
 ```
 
-Install [pre-commit](https://pre-commit.com/) once with `pip install pre-commit &&
+Install [pre-commit](https://pre-commit.com/) once with `brew bundle &&
 pre-commit install` (after `npm install`) to run SwiftLint, oxlint, and oxfmt
 before each commit. See [CONTRIBUTING.md](CONTRIBUTING.md).
 
