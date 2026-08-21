@@ -35,6 +35,27 @@ jobs:
       - name: Run Swift tests
         run: swift test
 
+  npm-lint:
+    name: npm lint & format
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+
+      - name: Install Node dependencies
+        run: npm install
+
+      - name: Lint JavaScript and TypeScript
+        run: npm run lint
+
+      - name: Check formatting
+        run: npm run fmt:check
+
   npm-build:
     name: npm build (Node ${{ matrix.node-version }})
     runs-on: ubuntu-latest

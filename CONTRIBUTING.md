@@ -5,11 +5,11 @@ and cut releases.
 
 ## Branches
 
-| Branch | Purpose |
-|--------|---------|
-| `main` | Always reflects the latest **released** (or release-ready) state. Tagged for SPM consumers. |
-| `release/X.Y.Z` | Integration branch for an upcoming version. Feature work targets here first. |
-| `<type>/<description>` | Short-lived branches for individual changes — see [Branch names](#branch-names). |
+| Branch                 | Purpose                                                                                     |
+| ---------------------- | ------------------------------------------------------------------------------------------- |
+| `main`                 | Always reflects the latest **released** (or release-ready) state. Tagged for SPM consumers. |
+| `release/X.Y.Z`        | Integration branch for an upcoming version. Feature work targets here first.                |
+| `<type>/<description>` | Short-lived branches for individual changes — see [Branch names](#branch-names).            |
 
 Nothing lands on `main` directly. Open a pull request instead.
 
@@ -24,13 +24,13 @@ Branch names follow [Conventional Branch](https://conventionalbranch.org/):
 Use lowercase letters, numbers, and hyphens in the description. No underscores or
 spaces. Release branches may use dots in the version (e.g. `release/0.2.0`).
 
-| Prefix | Use for |
-|--------|---------|
-| `feature/` (or `feat/`) | New functionality |
-| `fix/` (or `bugfix/`) | Bug fixes |
-| `hotfix/` | Urgent fixes against a released version |
-| `release/` | Release integration branches (e.g. `release/0.2.0`) |
-| `chore/` | Everything else — CI, docs, dependencies, refactors, tests |
+| Prefix                  | Use for                                                    |
+| ----------------------- | ---------------------------------------------------------- |
+| `feature/` (or `feat/`) | New functionality                                          |
+| `fix/` (or `bugfix/`)   | Bug fixes                                                  |
+| `hotfix/`               | Urgent fixes against a released version                    |
+| `release/`              | Release integration branches (e.g. `release/0.2.0`)        |
+| `chore/`                | Everything else — CI, docs, dependencies, refactors, tests |
 
 Stick to these prefixes. Commit messages have a wider vocabulary (`ci:`,
 `test:`, `docs:`, etc. under [Conventional Commits](#commit-messages)); branch
@@ -137,7 +137,10 @@ is published separately when ready — a Swift tag does not require an npm publi
 
 ```bash
 swift test          # no Node toolchain required
+swift package plugin --allow-writing-to-package-directory swiftlint -- lint --strict
 npm install         # only for @sod/build
+npm run lint        # oxlint
+npm run fmt:check   # oxfmt
 npm run build       # regenerates Tests/SodTests/Fixtures/
 ```
 

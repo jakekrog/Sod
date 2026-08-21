@@ -8,7 +8,7 @@ Swift clients that share a contract with a TypeScript backend usually
 re-implement its validation rules — and the two drift apart the moment either
 side changes. Sod evaluates the actual schemas in an embedded JavaScriptCore
 context, so refinements, transforms, and `superRefine` logic behave exactly as
-they do on the server. Because they *are* the server's schemas.
+they do on the server. Because they _are_ the server's schemas.
 
 ```swift
 let zodSource = try String(contentsOf: zodBundleURL)
@@ -73,7 +73,7 @@ An optional `zod` field overrides module resolution (for monorepos):
 ```js
 export default {
   zod: "../packages/zod",
-  schemas: { /* ... */ },
+  schemas: {/* ... */},
   outDir: "./Generated/Sod",
 };
 ```
@@ -114,9 +114,9 @@ into the app, or downloaded and registered at runtime.
 
 `validate` throws two distinct things, and the difference matters:
 
-- **`SodError`** — the *data* was invalid. Carries every issue Zod reported.
+- **`SodError`** — the _data_ was invalid. Carries every issue Zod reported.
   Show this to a user.
-- **`SodRuntimeError`** — *Sod* couldn't run: an unregistered schema name, a
+- **`SodRuntimeError`** — _Sod_ couldn't run: an unregistered schema name, a
   broken bundle, an encoding failure. This is a bug or a bad deployment, not a
   form message.
 
@@ -141,7 +141,7 @@ versions, and Sod shouldn't need a release to surface one.
 **Sod is not a sandbox.** It runs the JavaScript you give it, in your process.
 The context gets no host bridge, so a bundle can't reach your app's APIs — but
 verifying that a bundle is what you think it is (a content hash, a signature, a
-trusted origin) is your job, and it must happen *before* `register(source:)`.
+trusted origin) is your job, and it must happen _before_ `register(source:)`.
 This matters most if you fetch bundles at runtime.
 
 Values you validate never leave the device. JavaScriptCore runs in-process; the
@@ -173,6 +173,8 @@ plus a synchronous JS call. Your Zod bundle adds ~320 KB to your app; a
 swift test          # requires no Node toolchain
 swift package plugin --allow-writing-to-package-directory swiftlint -- lint --strict
 npm install         # only for @sod/build
+npm run lint        # oxlint
+npm run fmt:check   # oxfmt
 npm run build       # regenerates Tests/SodTests/Fixtures/
 ```
 
