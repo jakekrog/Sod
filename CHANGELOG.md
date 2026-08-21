@@ -15,8 +15,19 @@ Plain SemVer. Each release records notable API changes.
 
 - `@sod/build` npm package — `npx sod build` produces `zod.bundle.js`,
   `zod.bundle.version`, and `schemas.bundle.js` from `sod.config.js`.
+- `@sod/build` programmatic API — `build()`, `loadConfig()`, `bundleZod()`, and
+  `bundleSchemas()` with TypeScript types.
 - `Sod(zodSource:zodVersion:)` — loads a consumer-supplied Zod bundle.
 - `Sod.activeZodVersion` — the Zod semver passed at init, when provided.
+- GitHub Actions CI — Swift tests and SwiftLint on macOS; npm lint, format, test,
+  and build (Node 22/24/26) on Ubuntu.
+- pre-commit hooks — SwiftLint, oxlint, and oxfmt (see `CONTRIBUTING.md`).
+- npm Release workflow — manual publish of `@sod/build` via GitHub Actions.
+
+### Changed
+
+- `@sod/build` rewritten in TypeScript and bundled with tsdown; CLI and bundle
+  output format are unchanged.
 
 ### Removed
 
@@ -50,9 +61,8 @@ yet.
 - `Sod.bundledZodVersion` — the embedded Zod version, checkable at runtime.
 - `scripts/bundle.mjs` — rebuilds the embedded Zod bundle and refuses output
   that isn't JavaScriptCore-safe.
-- `scripts/build-fixture.mjs` — compiles `fixtures/exampleSchemas.ts` into the
-  test fixture, so the suite exercises real bundler output rather than only
-  hand-written JS.
+- `scripts/build-fixture.mjs` — compiles fixture schemas into the test bundle, so
+  the suite exercises real bundler output rather than only hand-written JS.
 
 ### Notes
 
