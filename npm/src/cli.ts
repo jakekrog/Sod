@@ -4,7 +4,7 @@
  *
  *   npx sod build
  */
-import { build } from "./index.mjs";
+import { build } from "./index.ts";
 
 const [command] = process.argv.slice(2);
 

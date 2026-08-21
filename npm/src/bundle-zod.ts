@@ -7,27 +7,32 @@ import { createRequire } from "node:module";
 import { dirname, join, resolve } from "node:path";
 import { writeFileSync } from "node:fs";
 
-const FORBIDDEN = [
+export interface ZodBundleResult {
+  zodPath: string;
+  versionPath: string;
+  version: string;
+  sizeKB: string;
+}
+
+const FORBIDDEN: readonly (readonly [string, string])[] = [
   ["require(", "CommonJS require"],
   ["process.", "Node process"],
   ["setTimeout(", "timers (JSC has none unless the host provides them)"],
   ["module.exports", "CommonJS exports"],
 ];
 
-/**
- * @param {object} options
- * @param {string} options.resolveDir - Directory used to resolve `zod`
- * @param {string} options.zodImport - Module specifier for Zod (default `"zod"`)
- * @param {string} options.outDir - Output directory
- * @returns {{ zodPath: string, versionPath: string, version: string, sizeKB: string }}
- */
-export async function bundleZod({ resolveDir, zodImport = "zod", outDir }) {
+export async function bundleZod(options: {
+  resolveDir: string;
+  zodImport?: string;
+  outDir: string;
+}): Promise<ZodBundleResult> {
+  const { resolveDir, zodImport = "zod", outDir } = options;
   const require = createRequire(join(resolveDir, "package.json"));
   const isPath = zodImport.startsWith(".") || zodImport.startsWith("/");
   const zodPackageJson = isPath
     ? join(resolve(resolveDir, zodImport), "package.json")
     : require.resolve(`${zodImport}/package.json`);
-  const zodVersion = require(zodPackageJson).version;
+  const zodVersion = (require(zodPackageJson) as { version: string }).version;
   const zodResolveDir = dirname(zodPackageJson);
   const zodModuleSpecifier = isPath ? dirname(zodPackageJson) : zodImport;
 

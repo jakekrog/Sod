@@ -4,29 +4,29 @@
 import { existsSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
+import type { SchemaEntry } from "./bundle-schemas.ts";
 
 const CONFIG_NAMES = ["sod.config.js", "sod.config.mjs", "sod.config.cjs"];
 
-/**
- * @typedef {object} SodConfig
- * @property {string} configPath - Absolute path to the loaded config file
- * @property {string} configDir - Directory containing the config file
- * @property {string} outDir - Absolute output directory
- * @property {string} [zod] - Optional module specifier or path override for Zod
- * @property {import("./bundle-schemas.mjs").SchemaEntry[]} schemas
- */
+export interface SodConfig {
+  /** Absolute path to the loaded config file */
+  configPath: string;
+  /** Directory containing the config file */
+  configDir: string;
+  /** Absolute output directory */
+  outDir: string;
+  /** Optional module specifier or path override for Zod */
+  zod?: string;
+  schemas: SchemaEntry[];
+}
 
-/**
- * @param {unknown} schemas
- * @returns {import("./bundle-schemas.mjs").SchemaEntry[]}
- */
-function normalizeSchemas(schemas) {
+function normalizeSchemas(schemas: unknown): SchemaEntry[] {
   if (Array.isArray(schemas)) {
     return schemas.map((entry, index) => {
       if (typeof entry !== "object" || entry === null) {
         throw new Error(`schemas[${index}] must be an object`);
       }
-      const { name, from, export: exportName } = entry;
+      const { name, from, export: exportName } = entry as Record<string, unknown>;
       if (typeof name !== "string" || name.length === 0) {
         throw new Error(`schemas[${index}].name must be a non-empty string`);
       }
@@ -53,11 +53,7 @@ function normalizeSchemas(schemas) {
   throw new Error("sod.config.js must declare `schemas` as an object map or array");
 }
 
-/**
- * @param {string} [projectDir]
- * @returns {Promise<SodConfig>}
- */
-export async function loadConfig(projectDir = process.cwd()) {
+export async function loadConfig(projectDir: string = process.cwd()): Promise<SodConfig> {
   const root = resolve(projectDir);
   const configPath = CONFIG_NAMES.map((name) => join(root, name)).find((path) => existsSync(path));
 
@@ -66,8 +62,8 @@ export async function loadConfig(projectDir = process.cwd()) {
   }
 
   const configDir = dirname(configPath);
-  const module = await import(pathToFileURL(configPath).href);
-  const raw = module.default ?? module;
+  const mod = (await import(pathToFileURL(configPath).href)) as { default?: unknown };
+  const raw = (mod.default ?? mod) as Record<string, unknown>;
 
   if (typeof raw !== "object" || raw === null) {
     throw new Error(`${configPath} must default-export a configuration object`);
@@ -87,7 +83,7 @@ export async function loadConfig(projectDir = process.cwd()) {
     configPath,
     configDir,
     outDir: resolve(configDir, outDirRaw),
-    zod,
+    zod: typeof zod === "string" ? zod : undefined,
     schemas: normalizeSchemas(raw.schemas),
   };
 }

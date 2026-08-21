@@ -8,3 +8,4 @@ Package.resolved
 # are checked in on purpose so consumers (and `swift test`) need no Node toolchain.
 node_modules/
 package-lock.json
+npm/dist/
