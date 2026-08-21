@@ -185,7 +185,7 @@ before each commit. See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 Test fixtures under `Tests/SodTests/Fixtures/` are checked in deliberately, so
 `swift test` needs no Node toolchain. `@sod/build` regenerates them from
-`fixtures/exampleSchemas.ts` via `sod.config.js`.
+`fixtures/*.ts` via `sod.config.js`.
 
 The suite runs a **bundler-compiled** fixture, not only hand-written JS: a
 hand-written fixture can't tell you whether real bundler output loads — it
