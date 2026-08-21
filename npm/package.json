@@ -24,6 +24,7 @@
     "build": "tsdown",
     "dev": "tsdown --watch",
     "typecheck": "tsc --noEmit",
+    "prepare": "tsdown",
     "prepublishOnly": "tsdown"
   },
   "devDependencies": {
