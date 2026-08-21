@@ -1,9 +1,9 @@
 export default {
   schemas: {
-    Order: "./fixtures/exampleSchemas.ts",
-    CatalogItem: "./fixtures/exampleSchemas.ts",
-    Webhook: "./fixtures/exampleSchemas.ts",
-    Profile: "./fixtures/exampleSchemas.ts",
+    Order: "./fixtures/order.ts",
+    CatalogItem: "./fixtures/catalogItem.ts",
+    Webhook: "./fixtures/webhook.ts",
+    Profile: "./fixtures/profile.ts",
   },
   outDir: "./Tests/SodTests/Fixtures",
 };
