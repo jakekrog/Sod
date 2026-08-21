@@ -12,11 +12,15 @@
     "validation",
     "zod"
   ],
-  "homepage": "https://github.com/jakekrog/Sod#readme",
+  "homepage": "https://github.com/jakekrog/Sod/tree/main/npm",
   "bugs": {
     "url": "https://github.com/jakekrog/Sod/issues"
   },
   "license": "MIT",
+  "author": {
+    "name": "jakekrog",
+    "url": "https://github.com/jakekrog"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/jakekrog/Sod.git",
