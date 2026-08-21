@@ -1,0 +1,40 @@
+name: Release
+
+# Publish @sod/build to npm. Tag and create the GitHub Release manually first
+# (see CONTRIBUTING.md), then run this workflow from the release tag.
+
+on:
+  workflow_dispatch:
+
+jobs:
+  publish:
+    name: Publish @sod/build to npm
+    runs-on: ubuntu-latest
+    environment: release
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build package
+        run: npm run build --workspace @sod/build
+
+      - name: Set up Node
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          registry-url: https://registry.npmjs.org
+
+      - name: Publish to npm
+        working-directory: npm
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish --provenance --access public

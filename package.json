@@ -6,9 +6,9 @@
   ],
   "type": "module",
   "scripts": {
-    "postinstall": "npm rebuild @sod/build",
+    "postinstall": "npm run build --workspace @sod/build",
     "prebuild": "npm run build --workspace @sod/build",
-    "build": "sod build",
+    "build": "node ./npm/dist/cli.js build",
     "fmt": "oxfmt",
     "fmt:check": "oxfmt --check",
     "lint": "oxlint",
