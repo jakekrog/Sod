@@ -1,6 +1,6 @@
 name: Release
 
-# Publish @sod/build to npm. Tag and create the GitHub Release manually first
+# Publish sod-build to npm. Tag and create the GitHub Release manually first
 # (see CONTRIBUTING.md), then run this workflow from the release tag.
 
 on:
@@ -8,7 +8,7 @@ on:
 
 jobs:
   publish:
-    name: Publish @sod/build to npm
+    name: Publish sod-build to npm
     runs-on: ubuntu-latest
     environment: release
 
@@ -25,7 +25,7 @@ jobs:
         run: npm install
 
       - name: Build package
-        run: npm run build --workspace @sod/build
+        run: npm run build --workspace sod-build
 
       - name: Set up Node
         uses: actions/setup-node@v7

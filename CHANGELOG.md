@@ -7,33 +7,35 @@ Plain SemVer. Each release records notable API changes.
 ### Breaking
 
 - Sod no longer embeds Zod. Consumers must bundle their own Zod version with
-  `@sod/build` and pass it to `Sod(zodSource:zodVersion:)`.
+  `sod-build` and pass it to `Sod(zodSource:zodVersion:)`.
 - Removed `Sod.bundledZodVersion`. Use `sod.activeZodVersion` instead.
 - Removed `Sod()` parameterless initializer.
 
 ### Added
 
-- `@sod/build` npm package — `npx sod build` produces `zod.bundle.js`,
+- `sod-build` npm package — `npx sod build` produces `zod.bundle.js`,
   `zod.bundle.version`, and `schemas.bundle.js` from `sod.config.js`.
-- `@sod/build` programmatic API — `build()`, `loadConfig()`, `bundleZod()`, and
+- `sod-build` programmatic API — `build()`, `loadConfig()`, `bundleZod()`, and
   `bundleSchemas()` with TypeScript types.
 - `Sod(zodSource:zodVersion:)` — loads a consumer-supplied Zod bundle.
 - `Sod.activeZodVersion` — the Zod semver passed at init, when provided.
 - GitHub Actions CI — Swift tests and SwiftLint on macOS; npm lint, format, test,
   and build (Node 22/24/26) on Ubuntu.
 - pre-commit hooks — SwiftLint, oxlint, and oxfmt (see `CONTRIBUTING.md`).
-- npm Release workflow — manual publish of `@sod/build` via GitHub Actions.
+- npm Release workflow — manual publish of `sod-build` via GitHub Actions.
 
 ### Changed
 
-- `@sod/build` rewritten in TypeScript and bundled with tsdown; CLI and bundle
+- `sod-build` rewritten in TypeScript and bundled with tsdown; CLI and bundle
   output format are unchanged.
+- npm package published as unscoped `sod-build` (the `@sod` org on npm is
+  unavailable).
 
 ### Removed
 
 - Embedded `Sources/Sod/Resources/zod.bundle.js` and `zod.bundle.version`.
 - `scripts/bundle.mjs` and `scripts/build-fixture.mjs` (replaced by
-  `@sod/build`).
+  `sod-build`).
 
 ## [0.1.0] — 2026-07-15
 

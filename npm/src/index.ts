@@ -1,5 +1,5 @@
 /**
- * Programmatic entry point for `@sod/build`.
+ * Programmatic entry point for `sod-build`.
  */
 import { mkdirSync } from "node:fs";
 import { bundleZod, type ZodBundleResult } from "./bundle-zod.ts";
