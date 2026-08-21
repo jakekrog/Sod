@@ -9,3 +9,8 @@ Package.resolved
 node_modules/
 package-lock.json
 npm/dist/
+
+# Turbo's per-package run cache. Standalone Sod builds with tsdown, but when this
+# package is consumed as a submodule inside a Turborepo monorepo, `turbo run build`
+# writes .turbo/ here. Ignore it so the submodule working tree stays clean.
+.turbo/
