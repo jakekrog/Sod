@@ -144,6 +144,26 @@ npm run fmt:check   # oxfmt
 npm run build       # regenerates Tests/SodTests/Fixtures/
 ```
 
+### Pre-commit hooks
+
+[pre-commit](https://pre-commit.com/) runs the same linters as CI before each
+commit. Linter versions come from `Package.swift` (SwiftLint) and
+`package.json` (oxlint, oxfmt) — not separate pins in `.pre-commit-config.yaml`.
+
+One-time setup:
+
+```bash
+brew bundle            # installs pre-commit from Brewfile
+npm install            # required for oxlint / oxfmt hooks
+pre-commit install
+```
+
+Run all hooks manually (optional):
+
+```bash
+pre-commit run --all-files
+```
+
 See [README.md](README.md) for install and consumer build instructions.
 
 ## Branch protection (recommended)

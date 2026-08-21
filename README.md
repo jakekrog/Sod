@@ -176,7 +176,12 @@ npm install         # only for @sod/build
 npm run lint        # oxlint
 npm run fmt:check   # oxfmt
 npm run build       # regenerates Tests/SodTests/Fixtures/
+pre-commit run --all-files   # optional; hooks also run on git commit
 ```
+
+Install [pre-commit](https://pre-commit.com/) once with `brew bundle &&
+pre-commit install` (after `npm install`) to run SwiftLint, oxlint, and oxfmt
+before each commit. See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 Test fixtures under `Tests/SodTests/Fixtures/` are checked in deliberately, so
 `swift test` needs no Node toolchain. `@sod/build` regenerates them from
