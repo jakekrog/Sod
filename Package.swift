@@ -15,6 +15,9 @@ let package = Package(
     products: [
         .library(name: "Sod", targets: ["Sod"]),
     ],
+    dependencies: [
+        .package(url: "https://github.com/SimplyDanny/SwiftLintPlugins", exact: "0.65.0"),
+    ],
     targets: [
         .target(
             name: "Sod",

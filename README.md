@@ -171,6 +171,7 @@ plus a synchronous JS call. Your Zod bundle adds ~320 KB to your app; a
 
 ```bash
 swift test          # requires no Node toolchain
+swift package plugin --allow-writing-to-package-directory swiftlint -- lint --strict
 npm install         # only for @sod/build
 npm run build       # regenerates Tests/SodTests/Fixtures/
 ```

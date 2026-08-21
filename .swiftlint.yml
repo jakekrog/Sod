@@ -1,0 +1,45 @@
+included:
+  - Package.swift
+  - Sources
+  - Tests
+
+excluded:
+  - .build
+  - .swiftpm
+
+disabled_rules:
+  # Trailing commas match SwiftPM and this repo's style.
+  - trailing_comma
+
+line_length:
+  warning: 120
+  error: 200
+  ignores_urls: true
+  ignores_function_declarations: true
+
+identifier_name:
+  min_length:
+    warning: 2
+    error: 2
+  excluded:
+    - z
+    - at
+
+type_name:
+  min_length:
+    warning: 2
+    error: 2
+
+file_length:
+  warning: 500
+  error: 800
+
+function_body_length:
+  warning: 60
+  error: 100
+
+type_body_length:
+  warning: 300
+  error: 500
+
+reporter: xcode
