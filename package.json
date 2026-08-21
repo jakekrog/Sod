@@ -16,7 +16,7 @@
     "test": "npm run test --workspace sod-build"
   },
   "devDependencies": {
-    "esbuild": "0.28.0",
+    "esbuild": "0.28.2",
     "oxfmt": "0.64.0",
     "oxlint": "1.79.0",
     "sod-build": "workspace:*",
