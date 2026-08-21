@@ -1,23 +1,81 @@
 # Sod
 
+[![CI](https://github.com/jakekrog/Sod/actions/workflows/ci.yml/badge.svg)](https://github.com/jakekrog/Sod/actions/workflows/ci.yml)
+
 Run real [Zod](https://zod.dev) schemas on Apple platforms.
 
 Swift clients that share a contract with a TypeScript backend usually
 re-implement its validation rules — and the two drift apart the moment either
 side changes. Sod evaluates the actual schemas in an embedded JavaScriptCore
 context, so refinements, transforms, and `superRefine` logic behave exactly as
-they do on the server. Because they *are* the server's schemas.
+they do on the server. Because they _are_ the server's schemas.
 
 ```swift
-let sod = try Sod()
+let zodSource = try String(contentsOf: zodBundleURL)
+let sod = try Sod(zodSource: zodSource, zodVersion: zodVersion)
 try await sod.register(source: schemaBundleSource)
 try await sod.validate(user, against: "UserCreate")
 ```
 
 ## Install
 
+**Swift package** — add Sod to your app or library:
+
 ```swift
-.package(url: "https://github.com/jakekrog/Sod.git", from: "0.1.0")
+.package(url: "https://github.com/jakekrog/Sod.git", from: "0.2.0")
+```
+
+**Build tooling** — Sod does not ship Zod. Bundle the Zod version from your
+`package.json` and your TypeScript schemas with `@sod/build`:
+
+```bash
+npm install -D @sod/build zod esbuild
+```
+
+Create `sod.config.js` next to your `package.json`:
+
+```js
+export default {
+  schemas: {
+    UserCreate: "./schemas/user.ts",
+    Order: "./schemas/order.ts",
+  },
+  outDir: "./Generated/Sod",
+};
+```
+
+Run the build:
+
+```bash
+npx sod build
+```
+
+This writes three files to `outDir`:
+
+- `zod.bundle.js` — sets `globalThis.z` (JavaScriptCore-safe IIFE)
+- `zod.bundle.version` — the resolved Zod semver
+- `schemas.bundle.js` — registers `globalThis.__sodSchemas`
+
+Add those files to your Xcode target (or load them at runtime). Pass the Zod
+bundle to `Sod(zodSource:zodVersion:)` and the schema bundle to
+`register(source:)`.
+
+For re-exports or export names that differ from the registry name:
+
+```js
+schemas: [
+  { name: "Order", from: "./schemas/order.ts", export: "OrderSchema" },
+],
+```
+
+An optional `zod` field overrides module resolution (for monorepos):
+
+```js
+export default {
+  zod: "../packages/zod",
+  schemas: {/* ... */},
+  outDir: "./Generated/Sod",
+};
 ```
 
 **0.x, and it means what SemVer says it means: the API may change.** Sod is
@@ -28,12 +86,13 @@ JavaScriptCore isn't public there — and not Linux.
 
 ## How schemas get in
 
-Sod ships Zod; you ship your schemas. Author them in TypeScript and pre-bundle
-with esbuild, marking Zod **external** (Sod provides it as `globalThis.z`) and
-assigning each schema to `globalThis.__sodSchemas`:
+You ship Zod and your schemas; Sod evaluates them. Author schemas in
+TypeScript, list them in `sod.config.js`, and run `@sod/build`. The schema
+bundle is an IIFE that reads Zod from `globalThis.z` (which you loaded first)
+and assigns each schema to `globalThis.__sodSchemas`:
 
 ```js
-// build output, registered via sod.register(source:)
+// schemas.bundle.js output, registered via sod.register(source:)
 (() => {
   const z = globalThis.z;
   globalThis.__sodSchemas = globalThis.__sodSchemas || {};
@@ -45,7 +104,7 @@ assigning each schema to `globalThis.__sodSchemas`:
 ```
 
 Pre-bundling on your side is the boundary: Sod doesn't ship a TypeScript
-compiler or an esbuild port, and you already run both to produce your web
+compiler or a pinned Zod version, and you already run both to produce your web
 bundle.
 
 The source is just a `String`, so where it comes from is up to you — compiled
@@ -55,9 +114,9 @@ into the app, or downloaded and registered at runtime.
 
 `validate` throws two distinct things, and the difference matters:
 
-- **`SodError`** — the *data* was invalid. Carries every issue Zod reported.
+- **`SodError`** — the _data_ was invalid. Carries every issue Zod reported.
   Show this to a user.
-- **`SodRuntimeError`** — *Sod* couldn't run: an unregistered schema name, a
+- **`SodRuntimeError`** — _Sod_ couldn't run: an unregistered schema name, a
   broken bundle, an encoding failure. This is a bug or a bad deployment, not a
   form message.
 
@@ -82,7 +141,7 @@ versions, and Sod shouldn't need a release to surface one.
 **Sod is not a sandbox.** It runs the JavaScript you give it, in your process.
 The context gets no host bridge, so a bundle can't reach your app's APIs — but
 verifying that a bundle is what you think it is (a content hash, a signature, a
-trusted origin) is your job, and it must happen *before* `register(source:)`.
+trusted origin) is your job, and it must happen _before_ `register(source:)`.
 This matters most if you fetch bundles at runtime.
 
 Values you validate never leave the device. JavaScriptCore runs in-process; the
@@ -90,79 +149,53 @@ trust boundary is the same as `JSONEncoder`'s.
 
 ## Versioning
 
-**Plain SemVer, currently 0.x.** Pinning a Sod version pins a Zod version, but
-the version *string* doesn't try to tell you which — `Sod.bundledZodVersion`
-does, at runtime, and the [CHANGELOG](CHANGELOG.md) records it per release.
+**Plain SemVer, currently 0.x.** You own your Zod version — Sod no longer embeds
+one. Pass the semver from `zod.bundle.version` to `Sod(zodVersion:)` and assert
+`sod.activeZodVersion` in your tests so schema bundles are never compiled
+against one Zod and executed against another.
 
-An earlier scheme encoded it (`{zodMajor}.{zodMinor}.{sodPatch}`, so `4.4.0`
-would mean Zod 4.4.x). It was dropped for two reasons worth knowing if you're
-wondering why the version doesn't match Zod's:
-
-- **It breaks on Sod's first API change.** Breaking Sod's own API forces a major
-  bump; do that while Zod is on 4.x and you ship `5.0.0`, which then claims a Zod
-   5 that doesn't exist. The scheme's one promise fails exactly when a young
-  package needs it.
-- **The planned Zod override contradicts it.** If you can supply your own Zod
-  bundle, the running Zod isn't necessarily the embedded one, and no version
-  string can honestly claim otherwise.
-
-If your schema bundles are compiled against a Zod from your `package.json`,
-assert `Sod.bundledZodVersion` in your tests — those two must agree, or your
-bundles are compiled against one Zod and executed against another.
-
-### Planned: overriding the embedded Zod
-
-The embedded Zod is currently fixed at release, which caps what a
-runtime-delivered schema can use: a schema written against a newer Zod API won't
-evaluate. A future release will let you supply your own Zod bundle
-(`Sod(zodSource:)`), so that cap isn't a reason to ship an app update.
-
-It will come with sharp edges, stated up front:
-
-- **Zod is fixed for a `Sod` instance's lifetime, by design.** Schema objects
-  capture their `z` when constructed, so swapping Zod under a live instance
-  would leave already-registered schemas on the old semantics while new ones use
-  the new — mixed, and invisible in the results. To move Zod, build a new `Sod`
-  and re-register.
-- **You own compatibility.** Sod can't know whether your schema bundles work on
-  the Zod you supply. Have your bundles declare the Zod they were compiled
-  against, and check it against `activeZodVersion` before you register them. If
-  you skip this, you get bundles compiled against one Zod and executed against
-  another, and nothing will tell you.
-- **You own integrity, more than ever.** See Trust above — this is the
-  validation engine, not just a schema.
-- **Always keep a fallback.** A failed or bad override should degrade to
-  `bundledZodVersion`'s embedded copy, never to "cannot validate anything".
+**Zod is fixed for a `Sod` instance's lifetime, by design.** Schema objects
+capture their `z` when constructed, so swapping Zod under a live instance would
+leave already-registered schemas on the old semantics while new ones use the
+new — mixed, and invisible in the results. To move Zod versions, build a new
+`Sod` and re-register.
 
 ## Performance
 
-Creating a `Sod` parses and evaluates the Zod bundle — tens of milliseconds,
+Creating a `Sod` parses and evaluates your Zod bundle — tens of milliseconds,
 once. **Create one and keep it.** Steady-state cost per call is a JSON encode
-plus a synchronous JS call. The embedded bundle adds ~320 KB to your app; a
+plus a synchronous JS call. Your Zod bundle adds ~320 KB to your app; a
 `JSContext` costs low-single-digit MB of memory.
 
 ## Development
 
 ```bash
-swift test                     # requires no Node toolchain
-npm install                    # only for the two scripts below
-node scripts/bundle.mjs        # only when moving to a new Zod version
-node scripts/build-fixture.mjs # only when changing the test fixture's schema
+swift test          # requires no Node toolchain
+swift package plugin --allow-writing-to-package-directory swiftlint -- lint --strict
+npm install         # only for @sod/build
+npm run lint        # oxlint
+npm run fmt:check   # oxfmt
+npm run build       # regenerates Tests/SodTests/Fixtures/
+pre-commit run --all-files   # optional; hooks also run on git commit
 ```
 
-`Sources/Sod/Resources/zod.bundle.js` is checked in deliberately, so consumers
-need no Node toolchain. `scripts/bundle.mjs` regenerates it and refuses output
-that isn't JavaScriptCore-safe (no `require`, `process`, timers, or CommonJS
-exports — JSC is a bare engine with no module loader and no host globals).
+Install [pre-commit](https://pre-commit.com/) once with `brew bundle &&
+pre-commit install` (after `npm install`) to run SwiftLint, oxlint, and oxfmt
+before each commit. See [CONTRIBUTING.md](CONTRIBUTING.md).
 
-The suite runs a **bundler-compiled** fixture, not only hand-written JS:
-`fixtures/exampleSchemas.ts` is compiled by `scripts/build-fixture.mjs` exactly
-the way a consumer compiles their schemas. A hand-written fixture can't tell you
-whether real bundler output loads — it never went through a bundler — so this is
-what catches Zod failing to resolve to `globalThis.z`, or minified output
-misbehaving under JavaScriptCore. It doubles as a worked example of the consumer
-build.
+Test fixtures under `Tests/SodTests/Fixtures/` are checked in deliberately, so
+`swift test` needs no Node toolchain. `@sod/build` regenerates them from
+`fixtures/*.ts` via `sod.config.js`.
+
+The suite runs a **bundler-compiled** fixture, not only hand-written JS: a
+hand-written fixture can't tell you whether real bundler output loads — it
+never went through a bundler — so this is what catches Zod failing to resolve
+to `globalThis.z`, or minified output misbehaving under JavaScriptCore.
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for branching, merge strategy, and
+release process.
 
 ## License
 
-MIT. Embeds Zod, also MIT — see [LICENSE](LICENSE).
+MIT. Your app bundles Zod separately under its own MIT license — see
+[LICENSE](LICENSE).

@@ -1,0 +1,42 @@
+# See https://pre-commit.com for usage. Install: pip install pre-commit && pre-commit install
+minimum_pre_commit_version: "3.0.0"
+
+exclude: |
+  (?x)^(
+    Tests/SodTests/Fixtures/|
+    Sources/Sod/Resources/
+  )
+
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: check-yaml
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+        exclude: \.md$
+
+  - repo: local
+    hooks:
+      - id: swiftlint
+        name: SwiftLint
+        entry: >
+          swift package plugin --allow-writing-to-package-directory
+          swiftlint -- lint --strict
+        language: system
+        types: [swift]
+        pass_filenames: true
+
+      - id: oxlint
+        name: oxlint
+        entry: npm run lint --
+        language: system
+        files: \.(js|mjs|cjs|ts|tsx)$
+        pass_filenames: true
+
+      - id: oxfmt
+        name: oxfmt
+        entry: npm run fmt --
+        language: system
+        files: \.(js|mjs|cjs|ts|tsx|json|md|yaml|yml)$
+        pass_filenames: true

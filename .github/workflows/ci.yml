@@ -1,0 +1,117 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+      - release/**
+  pull_request:
+    branches:
+      - main
+      - release/**
+
+jobs:
+  swiftlint:
+    name: SwiftLint
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Lint
+        run: >
+          swift package plugin --allow-writing-to-package-directory
+          swiftlint -- lint
+          --strict
+          --reporter github-actions-logging
+
+  swift-test:
+    name: Swift tests
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Run Swift tests
+        run: swift test
+
+  npm-lint:
+    name: npm lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Node
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+
+      - name: Install Node dependencies
+        run: npm install
+
+      - name: Lint JavaScript and TypeScript
+        run: npm run lint
+
+  npm-format:
+    name: npm format
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Node
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+
+      - name: Install Node dependencies
+        run: npm install
+
+      - name: Check formatting
+        run: npm run fmt:check
+
+  npm-test:
+    name: npm test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Node
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+
+      - name: Install Node dependencies
+        run: npm install
+
+      - name: Run tests
+        run: npm test
+
+  npm-build:
+    name: npm build (Node ${{ matrix.node-version }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [22, 24, 26]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install Node dependencies
+        run: npm install
+
+      - name: Typecheck
+        run: npm run typecheck --workspace @sod/build
+
+      - name: Build test fixtures
+        run: npm run build
+
+      - name: Verify committed fixtures are up to date
+        run: git diff --exit-code Tests/SodTests/Fixtures/

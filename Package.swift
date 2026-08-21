@@ -15,26 +15,26 @@ let package = Package(
     products: [
         .library(name: "Sod", targets: ["Sod"]),
     ],
+    dependencies: [
+        .package(url: "https://github.com/SimplyDanny/SwiftLintPlugins", exact: "0.65.0"),
+    ],
     targets: [
         .target(
             name: "Sod",
-            path: "Sources/Sod",
-            // Checked into the repo and shipped as a resource so consumers need
-            // no Node toolchain. Regenerate with `node scripts/bundle.mjs`.
-            resources: [
-                .copy("Resources/zod.bundle.js"),
-                .copy("Resources/zod.bundle.version"),
-            ]
+            path: "Sources/Sod"
         ),
         .testTarget(
             name: "SodTests",
             dependencies: ["Sod"],
             path: "Tests/SodTests",
-            // Compiled from fixtures/exampleSchemas.ts by scripts/build-fixture.mjs,
-            // so the suite exercises real bundler output rather than only
-            // hand-written JS. Committed, so `swift test` needs no Node toolchain.
+            // Compiled from fixtures/*.ts by `@sod/build` via
+            // sod.config.js, so the suite exercises real bundler output rather
+            // than only hand-written JS. Committed, so `swift test` needs no
+            // Node toolchain.
             resources: [
-                .copy("Fixtures/example.bundle.js"),
+                .copy("Fixtures/zod.bundle.js"),
+                .copy("Fixtures/zod.bundle.version"),
+                .copy("Fixtures/schemas.bundle.js"),
             ]
         ),
     ]

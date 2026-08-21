@@ -1,0 +1,69 @@
+{
+  "name": "@sod/build",
+  "version": "0.2.0",
+  "description": "Build JavaScriptCore-safe Zod and schema bundles for Sod on Apple platforms.",
+  "keywords": [
+    "esbuild",
+    "ios",
+    "javascriptcore",
+    "schema",
+    "sod",
+    "swift",
+    "validation",
+    "zod"
+  ],
+  "homepage": "https://github.com/jakekrog/Sod/tree/main/npm",
+  "bugs": {
+    "url": "https://github.com/jakekrog/Sod/issues"
+  },
+  "license": "MIT",
+  "author": {
+    "name": "jakekrog",
+    "url": "https://github.com/jakekrog"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jakekrog/Sod.git",
+    "directory": "npm"
+  },
+  "bin": {
+    "sod": "./dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "type": "module",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "dev": "tsdown --watch",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "prepublishOnly": "npm run build"
+  },
+  "devDependencies": {
+    "@types/node": "^26.2.0",
+    "tsdown": "^0.22.14",
+    "typescript": "^7.0.2",
+    "vitest": "^3.2.4"
+  },
+  "peerDependencies": {
+    "esbuild": ">=0.20.0",
+    "zod": ">=4.0.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

@@ -1,7 +1,39 @@
 # Changelog
 
-Plain SemVer. Each release records the Zod version it embeds — the version
-string doesn't encode it; see the README's Versioning section for why.
+Plain SemVer. Each release records notable API changes.
+
+## [0.2.0] — 2026-08-20
+
+### Breaking
+
+- Sod no longer embeds Zod. Consumers must bundle their own Zod version with
+  `@sod/build` and pass it to `Sod(zodSource:zodVersion:)`.
+- Removed `Sod.bundledZodVersion`. Use `sod.activeZodVersion` instead.
+- Removed `Sod()` parameterless initializer.
+
+### Added
+
+- `@sod/build` npm package — `npx sod build` produces `zod.bundle.js`,
+  `zod.bundle.version`, and `schemas.bundle.js` from `sod.config.js`.
+- `@sod/build` programmatic API — `build()`, `loadConfig()`, `bundleZod()`, and
+  `bundleSchemas()` with TypeScript types.
+- `Sod(zodSource:zodVersion:)` — loads a consumer-supplied Zod bundle.
+- `Sod.activeZodVersion` — the Zod semver passed at init, when provided.
+- GitHub Actions CI — Swift tests and SwiftLint on macOS; npm lint, format, test,
+  and build (Node 22/24/26) on Ubuntu.
+- pre-commit hooks — SwiftLint, oxlint, and oxfmt (see `CONTRIBUTING.md`).
+- npm Release workflow — manual publish of `@sod/build` via GitHub Actions.
+
+### Changed
+
+- `@sod/build` rewritten in TypeScript and bundled with tsdown; CLI and bundle
+  output format are unchanged.
+
+### Removed
+
+- Embedded `Sources/Sod/Resources/zod.bundle.js` and `zod.bundle.version`.
+- `scripts/bundle.mjs` and `scripts/build-fixture.mjs` (replaced by
+  `@sod/build`).
 
 ## [0.1.0] — 2026-07-15
 
@@ -23,15 +55,14 @@ yet.
   a dotted string (and so an array index is never confused with a key named
   `"0"`). `SodIssue.code` is a `String` for forward compatibility with Zod
   releases that add codes.
-- `SodRuntimeError` — kept distinct from `SodError`: invalid *data* is something
+- `SodRuntimeError` — kept distinct from `SodError`: invalid _data_ is something
   to show a user, while a broken bundle is a bug, and conflating them turns a
   bad deployment into what looks like a form message.
 - `Sod.bundledZodVersion` — the embedded Zod version, checkable at runtime.
 - `scripts/bundle.mjs` — rebuilds the embedded Zod bundle and refuses output
   that isn't JavaScriptCore-safe.
-- `scripts/build-fixture.mjs` — compiles `fixtures/exampleSchemas.ts` into the
-  test fixture, so the suite exercises real bundler output rather than only
-  hand-written JS.
+- `scripts/build-fixture.mjs` — compiles fixture schemas into the test bundle, so
+  the suite exercises real bundler output rather than only hand-written JS.
 
 ### Notes
 
