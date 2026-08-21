@@ -27,7 +27,7 @@ let package = Package(
             name: "SodTests",
             dependencies: ["Sod"],
             path: "Tests/SodTests",
-            // Compiled from fixtures/*.ts by `@sod/build` via
+            // Compiled from fixtures/*.ts by `sod-build` via
             // sod.config.js, so the suite exercises real bundler output rather
             // than only hand-written JS. Committed, so `swift test` needs no
             // Node toolchain.

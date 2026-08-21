@@ -108,7 +108,7 @@ jobs:
         run: npm install
 
       - name: Typecheck
-        run: npm run typecheck --workspace @sod/build
+        run: npm run typecheck --workspace sod-build
 
       - name: Build test fixtures
         run: npm run build

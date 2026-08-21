@@ -1,4 +1,4 @@
-# @sod/build
+# sod-build
 
 Build JavaScriptCore-safe Zod and schema bundles for [Sod](https://github.com/jakekrog/Sod) on Apple platforms.
 
@@ -7,7 +7,7 @@ Sod evaluates real Zod schemas in an embedded JavaScriptCore context. This packa
 ## Install
 
 ```bash
-npm install -D @sod/build zod esbuild
+npm install -D sod-build zod esbuild
 ```
 
 Peer dependencies: **Zod 4+** and **esbuild 0.20+** (supplied by your project).
@@ -71,7 +71,7 @@ schemas: [
 ## Programmatic API
 
 ```js
-import { build, loadConfig } from "@sod/build";
+import { build, loadConfig } from "sod-build";
 
 const { zod, schemas, config } = await build({ projectDir: "/path/to/project" });
 console.log(zod.version, zod.sizeKB, schemas.sizeKB);

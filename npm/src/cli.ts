@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * CLI for `@sod/build`.
+ * CLI for `sod-build`.
  *
  *   npx sod build
  */

@@ -14,7 +14,7 @@ import Foundation
 /// try await sod.validate(user, against: "UserCreate")
 /// ```
 ///
-/// Schemas are authored in TypeScript and pre-bundled with `@sod/build` — Zod
+/// Schemas are authored in TypeScript and pre-bundled with `sod-build` — Zod
 /// marked external, since you supply it — into JS strings that assign
 /// `globalThis.__sodSchemas["Name"]`. Sod doesn't ship a TypeScript compiler
 /// or a pinned Zod version; consumers already run both to produce their web
@@ -46,7 +46,7 @@ public actor Sod {
 
     /// The Zod version this instance was constructed with, when the caller
     /// supplied one (typically from `zod.bundle.version` produced by
-    /// `@sod/build`).
+    /// `sod-build`).
     ///
     /// Assert this against the Zod in your `package.json` so schema bundles are
     /// never compiled against one Zod and executed against another.
@@ -59,7 +59,7 @@ public actor Sod {
     ///
     /// - Parameters:
     ///   - zodSource: A JavaScriptCore-safe IIFE that assigns `globalThis.z`,
-    ///     produced by `@sod/build`.
+    ///     produced by `sod-build`.
     ///   - zodVersion: The semver from `zod.bundle.version`, if you have it.
     ///     Sod can't infer this from the JS alone.
     public init(zodSource: String, zodVersion: String? = nil) throws {

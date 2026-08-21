@@ -7,7 +7,7 @@ import Testing
 ///
 /// The other suites prove the API against fixtures written by hand — which can't
 /// tell you whether *bundler output* actually loads, because they never went
-/// through a bundler. The modules under `fixtures/` are compiled by `@sod/build`
+/// through a bundler. The modules under `fixtures/` are compiled by `sod-build`
 /// via `sod.config.js` the way a consumer compiles their own schemas (Zod
 /// external, IIFE, minified), and this suite runs the result. That's what
 /// catches Zod failing to resolve to `globalThis.z`, or minified output

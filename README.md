@@ -26,10 +26,10 @@ try await sod.validate(user, against: "UserCreate")
 ```
 
 **Build tooling** — Sod does not ship Zod. Bundle the Zod version from your
-`package.json` and your TypeScript schemas with `@sod/build`:
+`package.json` and your TypeScript schemas with `sod-build`:
 
 ```bash
-npm install -D @sod/build zod esbuild
+npm install -D sod-build zod esbuild
 ```
 
 Create `sod.config.js` next to your `package.json`:
@@ -87,7 +87,7 @@ JavaScriptCore isn't public there — and not Linux.
 ## How schemas get in
 
 You ship Zod and your schemas; Sod evaluates them. Author schemas in
-TypeScript, list them in `sod.config.js`, and run `@sod/build`. The schema
+TypeScript, list them in `sod.config.js`, and run `sod-build`. The schema
 bundle is an IIFE that reads Zod from `globalThis.z` (which you loaded first)
 and assigns each schema to `globalThis.__sodSchemas`:
 
@@ -172,7 +172,7 @@ plus a synchronous JS call. Your Zod bundle adds ~320 KB to your app; a
 ```bash
 swift test          # requires no Node toolchain
 swift package plugin --allow-writing-to-package-directory swiftlint -- lint --strict
-npm install         # only for @sod/build
+npm install         # only for sod-build
 npm run lint        # oxlint
 npm run fmt:check   # oxfmt
 npm run build       # regenerates Tests/SodTests/Fixtures/
@@ -184,7 +184,7 @@ pre-commit install` (after `npm install`) to run SwiftLint, oxlint, and oxfmt
 before each commit. See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 Test fixtures under `Tests/SodTests/Fixtures/` are checked in deliberately, so
-`swift test` needs no Node toolchain. `@sod/build` regenerates them from
+`swift test` needs no Node toolchain. `sod-build` regenerates them from
 `fixtures/*.ts` via `sod.config.js`.
 
 The suite runs a **bundler-compiled** fixture, not only hand-written JS: a

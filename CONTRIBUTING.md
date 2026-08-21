@@ -106,7 +106,7 @@ chore(release): 0.2.0
 Breaking changes use `!` or a `BREAKING CHANGE:` footer:
 
 ```text
-feat!: require consumer-supplied Zod via @sod/build
+feat!: require consumer-supplied Zod via sod-build
 ```
 
 ## Changelog
@@ -129,15 +129,15 @@ Cutting a release:
    - Commit: `chore(release): X.Y.Z`
 4. When CI is green: `git tag X.Y.Z && git push origin X.Y.Z`
 5. Create a [GitHub Release](https://docs.github.com/en/repositories/releasing-projects-on-github/managing-releases-in-a-repository) from the tag. Paste the matching `CHANGELOG.md` section as the release notes.
-6. Run the [Release](.github/workflows/release.yml) workflow from the Actions tab on the release tag to publish `@sod/build` to npm. Configure the `release` environment with an `NPM_TOKEN` secret (npm automation token).
+6. Run the [Release](.github/workflows/release.yml) workflow from the Actions tab on the release tag to publish `sod-build` to npm. Configure the `release` environment with an `NPM_TOKEN` secret (npm automation token).
 
-### First `@sod/build` publish (npm)
+### First `sod-build` publish (npm)
 
 Trusted publishing is not available until the package exists on npm. Publish the first version locally:
 
 ```bash
 npm install
-npm run build --workspace @sod/build
+npm run build --workspace sod-build
 cd npm
 npm pack --dry-run    # confirm tarball: dist/, README.md, LICENSE, package.json
 npm login             # or: export NPM_TOKEN=npm_...
@@ -146,7 +146,7 @@ npm publish --access public
 
 After the package exists, enable [trusted publishing](https://docs.npmjs.com/trusted-publishers) on npm (GitHub Actions, workflow `release.yml`, environment `release`) if you want provenance on later CI publishes. Until then, the Release workflow uses `NPM_TOKEN`.
 
-SPM consumers pin git tags (e.g. `from: "0.2.0"`). The `@sod/build` npm package
+SPM consumers pin git tags (e.g. `from: "0.2.0"`). The `sod-build` npm package
 is published separately — run the Release workflow after the GitHub Release is cut.
 
 ## Development
@@ -154,7 +154,7 @@ is published separately — run the Release workflow after the GitHub Release is
 ```bash
 swift test          # no Node toolchain required
 swift package plugin --allow-writing-to-package-directory swiftlint -- lint --strict
-npm install         # only for @sod/build
+npm install         # only for sod-build
 npm run lint        # oxlint
 npm run fmt:check   # oxfmt
 npm run build       # regenerates Tests/SodTests/Fixtures/

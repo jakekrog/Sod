@@ -1,5 +1,5 @@
 {
-  "name": "@sod/build",
+  "name": "sod-build",
   "version": "0.2.0",
   "description": "Build JavaScriptCore-safe Zod and schema bundles for Sod on Apple platforms.",
   "keywords": [
@@ -27,7 +27,7 @@
     "directory": "npm"
   },
   "bin": {
-    "sod": "./dist/cli.js"
+    "sod": "dist/cli.js"
   },
   "files": [
     "dist",
