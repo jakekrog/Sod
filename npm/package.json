@@ -2,12 +2,33 @@
   "name": "@sod/build",
   "version": "0.2.0",
   "description": "Build JavaScriptCore-safe Zod and schema bundles for Sod on Apple platforms.",
+  "keywords": [
+    "esbuild",
+    "ios",
+    "javascriptcore",
+    "schema",
+    "sod",
+    "swift",
+    "validation",
+    "zod"
+  ],
+  "homepage": "https://github.com/jakekrog/Sod#readme",
+  "bugs": {
+    "url": "https://github.com/jakekrog/Sod/issues"
+  },
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jakekrog/Sod.git",
+    "directory": "npm"
+  },
   "bin": {
     "sod": "./dist/cli.js"
   },
   "files": [
-    "dist"
+    "dist",
+    "README.md",
+    "LICENSE"
   ],
   "type": "module",
   "types": "./dist/index.d.ts",
@@ -26,8 +47,7 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "prepare": "tsdown",
-    "prepublishOnly": "tsdown"
+    "prepublishOnly": "npm run build"
   },
   "devDependencies": {
     "@types/node": "^26.2.0",
