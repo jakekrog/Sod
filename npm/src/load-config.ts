@@ -53,12 +53,22 @@ function normalizeSchemas(schemas: unknown): SchemaEntry[] {
   throw new Error("sod.config.js must declare `schemas` as an object map or array");
 }
 
-export async function loadConfig(projectDir: string = process.cwd()): Promise<SodConfig> {
+export function findConfig(projectDir: string = process.cwd()): string | undefined {
   const root = resolve(projectDir);
-  const configPath = CONFIG_NAMES.map((name) => join(root, name)).find((path) => existsSync(path));
+  return CONFIG_NAMES.map((name) => join(root, name)).find((path) => existsSync(path));
+}
 
+export async function loadConfig(
+  projectDir: string = process.cwd(),
+  options: { requireSchemas?: boolean } = {},
+): Promise<SodConfig> {
+  const { requireSchemas = true } = options;
+
+  const configPath = findConfig(projectDir);
   if (configPath === undefined) {
-    throw new Error(`No sod.config.js found in ${root}. Create one next to package.json.`);
+    throw new Error(
+      `No sod.config.js found in ${resolve(projectDir)}. Create one next to package.json.`,
+    );
   }
 
   const configDir = dirname(configPath);
@@ -79,11 +89,13 @@ export async function loadConfig(projectDir: string = process.cwd()): Promise<So
     throw new Error("sod.config.js `zod` must be a non-empty module specifier when provided");
   }
 
+  const schemas = raw.schemas === undefined && !requireSchemas ? [] : normalizeSchemas(raw.schemas);
+
   return {
     configPath,
     configDir,
     outDir: resolve(configDir, outDirRaw),
     zod: typeof zod === "string" ? zod : undefined,
-    schemas: normalizeSchemas(raw.schemas),
+    schemas,
   };
 }

@@ -2,6 +2,12 @@
 
 Plain SemVer. Each release records notable API changes.
 
+## [Unreleased]
+
+### Added
+
+- `sod bundle-zod` — Zod-only CLI command (will ship as 0.3.0).
+
 ## [0.2.0] — 2026-08-20
 
 ### Breaking

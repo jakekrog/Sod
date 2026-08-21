@@ -33,7 +33,7 @@ export async function build(options: { projectDir?: string } = {}): Promise<Buil
 
 export { bundleZod } from "./bundle-zod.ts";
 export { bundleSchemas } from "./bundle-schemas.ts";
-export { loadConfig } from "./load-config.ts";
+export { loadConfig, findConfig } from "./load-config.ts";
 export type { SchemaEntry, SchemasBundleResult } from "./bundle-schemas.ts";
 export type { ZodBundleResult } from "./bundle-zod.ts";
 export type { SodConfig } from "./load-config.ts";
