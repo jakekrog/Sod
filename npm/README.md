@@ -44,6 +44,38 @@ This writes three files to `outDir`:
 
 Add those files to your Xcode target (or load them at runtime). Pass the Zod bundle to `Sod(zodSource:zodVersion:)` and the schema bundle to `register(source:)` in the Sod Swift package.
 
+## CLI
+
+### `sod build`
+
+Bundles the Zod runtime, your schemas, and the version file from `sod.config.js` (schemas required).
+
+### `sod bundle-zod`
+
+Bundles only the Zod runtime (`zod.bundle.js` + `zod.bundle.version`). No schemas and no `sod.config.js` required — useful when you bundle your own schemas or only need the on-device Zod runtime.
+
+```bash
+npx sod bundle-zod --out ./Generated/Sod
+```
+
+Options:
+
+| Flag           | Description                                                                                  |
+| -------------- | -------------------------------------------------------------------------------------------- |
+| `--out <dir>`  | Output directory (default: `outDir` from `sod.config.js` if present, else `./Generated/Sod`) |
+| `--zod <spec>` | Zod module specifier or path (default: `"zod"`, or the `zod` field from `sod.config.js`)     |
+| `--cwd <dir>`  | Directory to resolve Zod from and find `sod.config.js` (default: current directory)          |
+
+### Bundling schemas yourself?
+
+If you have a custom schema bundler (e.g. per-leaf bundles in a monorepo), use `sod bundle-zod` for the Zod half, or call `bundleZod()` programmatically:
+
+```js
+import { bundleZod } from "sod-build";
+
+await bundleZod({ resolveDir: process.cwd(), zodImport: "zod", outDir: "./generated" });
+```
+
 ## Configuration
 
 `sod.config.js` (or `.mjs` / `.cjs`) supports:

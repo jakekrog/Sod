@@ -2,7 +2,7 @@ import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { afterEach, describe, expect, it } from "vitest";
-import { loadConfig } from "./load-config.ts";
+import { loadConfig, findConfig } from "./load-config.ts";
 
 describe("loadConfig", () => {
   const tempDirs: string[] = [];
@@ -109,5 +109,35 @@ describe("loadConfig", () => {
 };`);
 
     await expect(loadConfig(dir)).rejects.toThrow(/zod.*non-empty module specifier/);
+  });
+
+  it("findConfig returns undefined when no config exists", () => {
+    const dir = mkdtempSync(join(tmpdir(), "sod-load-config-"));
+    tempDirs.push(dir);
+
+    expect(findConfig(dir)).toBeUndefined();
+  });
+
+  it("findConfig locates sod.config.js", () => {
+    const dir = tempProject(`export default {
+  schemas: { Widget: "./widget.ts" },
+};`);
+
+    expect(findConfig(dir)).toBe(join(dir, "sod.config.js"));
+  });
+
+  it("loadConfig(requireSchemas: false) tolerates a config with no schemas", async () => {
+    const dir = tempProject(`export default {
+  outDir: "./generated",
+  zod: "zod",
+};`);
+
+    await expect(loadConfig(dir)).rejects.toThrow(/object map or array/);
+
+    const config = await loadConfig(dir, { requireSchemas: false });
+
+    expect(config.schemas).toEqual([]);
+    expect(config.outDir).toBe(join(dir, "generated"));
+    expect(config.zod).toBe("zod");
   });
 });

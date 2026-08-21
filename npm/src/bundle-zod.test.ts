@@ -50,6 +50,7 @@ describe("bundleZod", () => {
 
     const source = readFileSync(join(outDir, "zod.bundle.js"), "utf8");
 
+    expect(source).toContain("globalThis.z");
     expect(source).not.toContain("require(");
     expect(source).not.toContain("process.");
     expect(source).not.toContain("setTimeout(");
