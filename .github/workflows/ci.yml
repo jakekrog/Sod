@@ -104,8 +104,15 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
+      # npm 10 (Node 22) crashes on optional peer resolution after vitest 5
+      # (`edgesOut`). Newer npm on 24+ is fine; only work around the matrix cell.
       - name: Install Node dependencies
-        run: npm install
+        run: |
+          if [ "${{ matrix.node-version }}" = "22" ]; then
+            npm install --legacy-peer-deps
+          else
+            npm install
+          fi
 
       - name: Typecheck
         run: npm run typecheck --workspace sod-build

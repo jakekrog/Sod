@@ -41,7 +41,8 @@ struct BundleTests {
     @Test("reports the Zod version supplied at init")
     func activeVersion() async throws {
         let sod = try await TestFixtures.makeSod()
-        #expect(await sod.activeZodVersion == "4.4.3")
+        let expected = try TestFixtures.zodVersion()
+        #expect(await sod.activeZodVersion == expected)
     }
 
     @Test("loads Zod into a fresh context")
