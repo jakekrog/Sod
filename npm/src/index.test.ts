@@ -5,7 +5,17 @@ import { fileURLToPath } from "node:url";
 import { afterEach, describe, expect, it } from "vitest";
 import { build } from "./index.ts";
 
-const repoRoot = join(fileURLToPath(import.meta.url), "../../..");
+const packageRoot = join(fileURLToPath(import.meta.url), "../..");
+
+function nodeModulesDirContainingZod(): string {
+  for (const dir of [packageRoot, join(packageRoot, "..")]) {
+    const nodeModules = join(dir, "node_modules");
+    if (existsSync(join(nodeModules, "zod"))) {
+      return nodeModules;
+    }
+  }
+  throw new Error("Could not find node_modules/zod for sod-build tests");
+}
 
 describe("build", () => {
   const tempDirs: string[] = [];
@@ -36,7 +46,7 @@ describe("build", () => {
   outDir: "./generated",
 };`,
     );
-    symlinkSync(join(repoRoot, "node_modules"), join(dir, "node_modules"), "dir");
+    symlinkSync(nodeModulesDirContainingZod(), join(dir, "node_modules"), "dir");
 
     return dir;
   }
