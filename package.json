@@ -17,8 +17,8 @@
   },
   "devDependencies": {
     "esbuild": "0.28.2",
-    "oxfmt": "0.71.0",
-    "oxlint": "1.86.0",
+    "oxfmt": "0.72.0",
+    "oxlint": "1.87.0",
     "sod-build": "workspace:*",
     "zod": "4.6.5"
   }
