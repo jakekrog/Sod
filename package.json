@@ -20,6 +20,6 @@
     "oxfmt": "0.72.0",
     "oxlint": "1.87.0",
     "sod-build": "workspace:*",
-    "zod": "4.6.5"
+    "zod": "4.6.6"
   }
 }
